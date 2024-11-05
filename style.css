@@ -1,0 +1,48 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Roboto", sans-serif;
+}
+
+#container {
+    width: 100vw;
+    height: 100vh;
+    background-color: #003C69;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#game-area {
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+#game-info {
+    background-color: #0076CE;
+    height: 2.5rem;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#score,
+#high-score {
+    color: #E0FFFF;
+    font-size: 1.125rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+#game-board {
+    background-color: #292929;
+    display: grid;
+    grid-template-rows: repeat(16, 2.5rem);
+    grid-template-columns: repeat(16, 2.5rem);
+}
+
+.cell {
+    background-color: #292929;
+    border-radius: 0.5rem;
+}
