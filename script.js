@@ -1,4 +1,4 @@
-import { addElements, move } from './utils.js';
+import { addElements, move, hasHitBoundary } from './utils.js';
 
 // Get the Game Board element from the DOM
 const gameBoard = document.getElementById('game-board');
@@ -36,7 +36,14 @@ document.addEventListener("keydown", (event) => {
 });
 
 // Start game loop - moves Snake every 0.25s
-setInterval(() => {
-    // Update Snake Head position
-    snakeHeadIndex = move(cells, snakeHeadIndex, direction);
+const intervalID = setInterval(() => {
+    // Check if Snake Head hits boundary
+    if (!hasHitBoundary(snakeHeadIndex, direction)) {
+        // Update Snake Head position
+        snakeHeadIndex = move(cells, snakeHeadIndex, direction);
+    }
+    // Game over when Snake hits boundary
+    else {
+        clearInterval(intervalID);
+    }
 }, 250);

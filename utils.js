@@ -35,3 +35,31 @@ export const move = (cells, index, direction) => {
     // Return the new snake head index
     return index;
 }
+
+// Function to check if snake head hits game boundaries
+export const hasHitBoundary = (index, direction) => {
+    // Check top boundary
+    if (direction === 'top') {
+        if (0 <= index && index <= 15) {
+            return true;
+        }
+    }
+    // Check right boundary
+    else if (direction === 'right') {
+        if ((index + 1) % 16 === 0) {
+            return true;
+        }
+    }
+    // Check bottom boundary
+    else if (direction === 'bottom') {
+        if (240 <= index && index <= 255) {
+            return true;
+        }
+    }
+    // Check left boundary
+    else if (direction === 'left') {
+        if (index % 16 === 0) {
+            return true;
+        }
+    }
+}
