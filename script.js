@@ -1,45 +1,26 @@
 import { addElements, move, hasHitBoundary, setFoodIndex } from './utils.js';
 
-// Get the Game Board element from the DOM
+// Get the Game Board element from the DOM and create 16x16 Game Board Grid (256 cells)
 const gameBoard = document.getElementById('game-board');
-
-// Create 16x16 Game Board Grid by adding 256 'div' elements with the class 'cell'
 addElements(gameBoard, 'div', 256, 'cell');
-
-// Get all cell elements
 const cells = document.getElementsByClassName('cell');
 
-// Set initial position of Snake head
+// Initialize snake head position, food position, and movement direction
 let snakeHeadIndex = 119;
-// Set Snake Head color
-cells[snakeHeadIndex].style.background = '#00CE76';
-
-// Set initial position of Food
 let foodIndex = setFoodIndex(cells);
-
-// Set initial direction of Snake movement
 let direction = 'top';
 
 // Listen for arrow key presses to change Snake direction
 document.addEventListener("keydown", (event) => {
-    switch (event.key) {
-        case "ArrowUp":
-            direction = 'top';
-            break;
-        case "ArrowRight":
-            direction = 'right';
-            break;
-        case "ArrowDown":
-            direction = 'bottom';
-            break;
-        case "ArrowLeft":
-            direction = 'left';
-            break;
+    const directions = { "ArrowUp": 'top', "ArrowRight": 'right', "ArrowDown": 'bottom', "ArrowLeft": 'left' };
+
+    if (directions[event.key]) {
+        direction = directions[event.key];
     }
 });
 
-// Start game loop - moves Snake every 0.25s
-const intervalID = setInterval(() => {
+// Main game loop: Moves the snake, checks for boundary collisions, and handles food consumption
+const gameLoop = () => {
     // Check if Snake Head hits boundary
     if (!hasHitBoundary(snakeHeadIndex, direction)) {
         // Update Snake Head position
@@ -55,4 +36,7 @@ const intervalID = setInterval(() => {
     else {
         clearInterval(intervalID);
     }
-}, 250);
+}
+
+// Start game loop - moves Snake every 0.25s
+const intervalID = setInterval(gameLoop, 250);
