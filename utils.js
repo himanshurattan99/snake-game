@@ -63,3 +63,15 @@ export const hasHitBoundary = (index, direction) => {
         }
     }
 }
+
+// Function to place food at random position
+export const setFoodIndex = (cells) => {
+    // Generate random index between 0 and 255 (inclusive)
+    let foodIndex = Math.floor(Math.random() * 256);
+
+    // Color new position
+    cells[foodIndex].style.background = '#E62121';
+
+    // Return the new food index
+    return foodIndex;
+}

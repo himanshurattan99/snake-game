@@ -1,4 +1,4 @@
-import { addElements, move, hasHitBoundary } from './utils.js';
+import { addElements, move, hasHitBoundary, setFoodIndex } from './utils.js';
 
 // Get the Game Board element from the DOM
 const gameBoard = document.getElementById('game-board');
@@ -13,6 +13,9 @@ const cells = document.getElementsByClassName('cell');
 let snakeHeadIndex = 119;
 // Set Snake Head color
 cells[snakeHeadIndex].style.background = '#00CE76';
+
+// Set initial position of Food
+let foodIndex = setFoodIndex(cells);
 
 // Set initial direction of Snake movement
 let direction = 'top';
@@ -41,6 +44,12 @@ const intervalID = setInterval(() => {
     if (!hasHitBoundary(snakeHeadIndex, direction)) {
         // Update Snake Head position
         snakeHeadIndex = move(cells, snakeHeadIndex, direction);
+
+        // Check if Snake Head position matches Food position
+        if (snakeHeadIndex === foodIndex) {
+            // Update Food position
+            foodIndex = setFoodIndex(cells);
+        }
     }
     // Game over when Snake hits boundary
     else {
