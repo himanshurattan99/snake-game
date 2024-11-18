@@ -5,8 +5,9 @@ const gameBoard = document.getElementById('game-board');
 addElements(gameBoard, 'div', 256, 'cell');
 const cells = document.getElementsByClassName('cell');
 
-// Initialize snake head position, food position, and movement direction
+// Initialize Snake Head index, Snake Body array, Food index, and movement direction
 let snakeHeadIndex = 119;
+let snakeBody = [snakeHeadIndex];
 let foodIndex = setFoodIndex(cells);
 let direction = 'top';
 
@@ -19,15 +20,18 @@ document.addEventListener("keydown", (event) => {
     }
 });
 
-// Main game loop: Moves the snake, checks for boundary collisions, and handles food consumption
+// Main game loop: Handles Snake movement, collision detection, Food consumption, Snake growth, and game over conditions
 const gameLoop = () => {
     // Check if Snake Head hits boundary
     if (!hasHitBoundary(snakeHeadIndex, direction)) {
-        // Update Snake Head position
-        snakeHeadIndex = move(cells, snakeHeadIndex, direction);
+        // Move Snake in current direction and get new Snake Head position
+        snakeHeadIndex = move(cells, snakeBody, direction);
 
         // Check if Snake Head position matches Food position
         if (snakeHeadIndex === foodIndex) {
+            // Grow Snake by duplicating last Body segment when Food is eaten
+            snakeBody.push(snakeBody[snakeBody.length - 1]);
+
             // Update Food position
             foodIndex = setFoodIndex(cells);
         }

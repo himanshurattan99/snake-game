@@ -10,30 +10,34 @@ export const addElements = (parentElement, elementName, count, className) => {
     }
 }
 
-// Function to move snake in specified direction
-export const move = (cells, index, direction) => {
-    // Clear current position
-    cells[index].style.background = `#292929`;
+// Function to move Snake in specified direction
+export const move = (cells, snakeBody, direction) => {
+    // Clear Tail from previous index
+    cells[snakeBody[snakeBody.length - 1]].style.background = '#292929';
 
-    // Update snake head position based on direction
-    if (direction === 'top') {
-        index = index - 16;
-    }
-    else if (direction === 'right') {
-        index = index + 1;
-    }
-    else if (direction === 'bottom') {
-        index = index + 16;
-    }
-    else if (direction === 'left') {
-        index = index - 1;
+    // Update each Snake segment to follow the one in front of it, starting from the Tail
+    for (let i = snakeBody.length - 1; i > 0; i--) {
+        snakeBody[i] = snakeBody[i - 1];
     }
 
-    // Color new position
-    cells[index].style.background = '#00CE76';
+    // Set movement values for each direction
+    const movements = {
+        top: -16,
+        right: 1,
+        bottom: 16,
+        left: -1
+    };
 
-    // Return the new snake head index
-    return index;
+    // Update Snake Head Index
+    snakeBody[0] = snakeBody[0] + movements[direction];
+
+    // Update Snake Head and Body colors
+    snakeBody.forEach((index, i) => {
+        cells[index].style.background = (i === 0) ? '#00CE76' : '#00CE9E';
+    });
+
+    // Return new Snake Head Index
+    return snakeBody[0];
 }
 
 // Function to check if snake head hits game boundaries
