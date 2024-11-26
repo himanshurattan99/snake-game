@@ -15,7 +15,10 @@ let direction = 'top';
 document.addEventListener("keydown", (event) => {
     const directions = { "ArrowUp": 'top', "ArrowRight": 'right', "ArrowDown": 'bottom', "ArrowLeft": 'left' };
 
-    if (directions[event.key]) {
+    const oppositeDirections = { "top": 'bottom', "bottom": 'top', "left": 'right', "right": 'left' };
+
+    // Check if new direction is not opposite of current direction
+    if (directions[event.key] && directions[event.key] !== oppositeDirections[direction]) {
         direction = directions[event.key];
     }
 });
