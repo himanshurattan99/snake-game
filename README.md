@@ -10,18 +10,24 @@ A nostalgic Snake Game built with vanilla JavaScript, HTML5 Canvas, and CSS. Con
 - 🍎 Random food spawning mechanism
 - 🍴 Food consumption collision detection
 - ➕ Snake length growth mechanism
+- 📛 Game ends when snake crosses itself
 - 🎨 Clean, minimalist design
 - 💻 No dependencies - built with pure JavaScript
 
 ## 🚀 Features To Add
 
-- 📛 Game ends when snake crosses itself
 - 🪙 Implement real-time score tracking with persistent high score storage
 - ❌ Display game over message with screen overlay
 - 🎵 Include sound effects for enhanced gameplay experience
 - 🌐 Customizable game board grid size
 - ⏯️ Add game control features (pause/restart)
 - 📱 Add a responsive layout
+
+## 🐞 Bugs Fixed
+
+- Prevented snake from moving in opposite direction
+- Fixed self-collision detection
+- Ensured food does not spawn on snake's body
 
 ## 🛠️ Technical Stack
 
