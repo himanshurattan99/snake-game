@@ -41,37 +41,54 @@ export const move = (cells, snakeBody, direction) => {
 }
 
 // Function to check if snake head hits game boundaries
-export const hasHitBoundary = (index, direction) => {
+export const checkCollision = (snakeBody, direction) => {
     // Check top boundary
     if (direction === 'top') {
-        if (0 <= index && index <= 15) {
+        if (0 <= snakeBody[0] && snakeBody[0] <= 15) {
             return true;
         }
     }
     // Check right boundary
     else if (direction === 'right') {
-        if ((index + 1) % 16 === 0) {
+        if ((snakeBody[0] + 1) % 16 === 0) {
             return true;
         }
     }
     // Check bottom boundary
     else if (direction === 'bottom') {
-        if (240 <= index && index <= 255) {
+        if (240 <= snakeBody[0] && snakeBody[0] <= 255) {
             return true;
         }
     }
     // Check left boundary
     else if (direction === 'left') {
-        if (index % 16 === 0) {
+        if (snakeBody[0] % 16 === 0) {
             return true;
         }
     }
+
+    // Check if Snake has crossed itself (only when Snake length is more than 2)
+    if (snakeBody.length > 2) {
+        for (let i = 1; i < snakeBody.length; i++) {
+            // Check if Snake Head crosses any Body segment
+            if (snakeBody[0] === snakeBody[i]) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 // Function to place food at random position
-export const setFoodIndex = (cells) => {
-    // Generate random index between 0 and 255 (inclusive)
-    let foodIndex = Math.floor(Math.random() * 256);
+export const setFoodIndex = (cells, snakeBody) => {
+    let foodIndex;
+
+    // Ensure Food does not spawn on Snake's Body
+    do {
+        // Generate random index between 0 and 255 (inclusive)
+        foodIndex = Math.floor(Math.random() * 256);
+    } while (snakeBody.includes(foodIndex));
 
     // Color new position
     cells[foodIndex].style.background = '#E62121';

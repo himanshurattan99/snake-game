@@ -1,4 +1,4 @@
-import { addElements, move, hasHitBoundary, setFoodIndex } from './utils.js';
+import { addElements, move, checkCollision, setFoodIndex } from './utils.js';
 
 // Get the Game Board element from the DOM and create 16x16 Game Board Grid (256 cells)
 const gameBoard = document.getElementById('game-board');
@@ -8,7 +8,7 @@ const cells = document.getElementsByClassName('cell');
 // Initialize Snake Head index, Snake Body array, Food index, and movement direction
 let snakeHeadIndex = 119;
 let snakeBody = [snakeHeadIndex];
-let foodIndex = setFoodIndex(cells);
+let foodIndex = setFoodIndex(cells, snakeBody);
 let direction = 'top';
 
 // Listen for arrow key presses to change Snake direction
@@ -23,7 +23,7 @@ document.addEventListener("keydown", (event) => {
 // Main game loop: Handles Snake movement, collision detection, Food consumption, Snake growth, and game over conditions
 const gameLoop = () => {
     // Check if Snake Head hits boundary
-    if (!hasHitBoundary(snakeHeadIndex, direction)) {
+    if (!checkCollision(snakeBody, direction)) {
         // Move Snake in current direction and get new Snake Head position
         snakeHeadIndex = move(cells, snakeBody, direction);
 
@@ -33,11 +33,19 @@ const gameLoop = () => {
             snakeBody.push(snakeBody[snakeBody.length - 1]);
 
             // Update Food position
-            foodIndex = setFoodIndex(cells);
+            foodIndex = setFoodIndex(cells, snakeBody);
         }
     }
-    // Game over when Snake hits boundary
+    // Game over when Snake hits boundary or crosses itself
     else {
+        // Restore Snake Head color and highlight it with red border
+        cells[snakeHeadIndex].style.background = '#00CE76';
+        cells[snakeHeadIndex].style.border = 'solid 0.125rem #E62121';
+
+        // Change Game Info background to red
+        const gameInfo = document.getElementById('game-info');
+        gameInfo.style.background = '#E62121';
+
         clearInterval(intervalID);
     }
 }
