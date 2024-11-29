@@ -9,6 +9,8 @@ const cells = document.getElementsByClassName('cell');
 const gameInfo = document.getElementById('game-info');
 const scoreElement = document.getElementById('score-value');
 const highScoreElement = document.getElementById('high-score-value');
+const gameOverOverlay = document.getElementById('game-over-overlay');
+const finalScoreElement = document.getElementById('final-score');
 
 // Initialize Game Variables
 let snakeHeadIndex = 119;
@@ -42,6 +44,9 @@ const resetGame = () => {
     direction = 'top';
     score = 0;
     isGameActive = true;
+
+    // Hide game over overlay
+    gameOverOverlay.style.opacity = 0;
 
     // Restart game loop
     intervalID = setInterval(gameLoop, 250);
@@ -100,6 +105,10 @@ const gameLoop = () => {
             localStorage.setItem('snakeHighScore', highScore);
             highScoreElement.innerText = highScore;
         }
+
+        // Display game over overlay and update final score on it
+        gameOverOverlay.style.opacity = 1;
+        finalScoreElement.innerText = score;
 
         // Change game active status
         isGameActive = false;
