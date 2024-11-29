@@ -17,12 +17,44 @@ let foodIndex = setFoodIndex(cells, snakeBody);
 let direction = 'top';
 let score = 0;
 let highScore = localStorage.getItem('snakeHighScore') || 0;
+let isGameActive = true;
 
 // Initialize High Score display
 highScoreElement.innerText = highScore;
 
-// Listen for arrow key presses to change Snake direction
+// Reset game state
+const resetGame = () => {
+    // Reset Snake Head color and border, Game Info background and score display
+    cells[snakeHeadIndex].style.background = '#00CE76';
+    cells[snakeHeadIndex].style.border = 'none';
+    gameInfo.style.background = '#0076CE';
+    scoreElement.innerText = 0;
+
+    // Reset Game Board
+    Array.from(cells).forEach(cell => {
+        cell.style.background = '#292929';
+    });
+
+    // Reset Game Variables
+    snakeHeadIndex = 119;
+    snakeBody = [snakeHeadIndex];
+    foodIndex = setFoodIndex(cells, snakeBody);
+    direction = 'top';
+    score = 0;
+    isGameActive = true;
+
+    // Restart game loop
+    intervalID = setInterval(gameLoop, 250);
+};
+
+// Listen for arrow key presses to restart the game (if over) and change Snake direction during gameplay
 document.addEventListener("keydown", (event) => {
+    // If game is over, restart on any key press
+    if (!isGameActive) {
+        resetGame();
+        return;
+    }
+
     const directions = { "ArrowUp": 'top', "ArrowRight": 'right', "ArrowDown": 'bottom', "ArrowLeft": 'left' };
 
     const oppositeDirections = { "top": 'bottom', "bottom": 'top', "left": 'right', "right": 'left' };
@@ -69,9 +101,12 @@ const gameLoop = () => {
             highScoreElement.innerText = highScore;
         }
 
+        // Change game active status
+        isGameActive = false;
+
         clearInterval(intervalID);
     }
 }
 
 // Start game loop - moves Snake every 0.25s
-const intervalID = setInterval(gameLoop, 250);
+let intervalID = setInterval(gameLoop, 250);
