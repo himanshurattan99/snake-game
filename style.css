@@ -47,6 +47,7 @@
     border-radius: 0.5rem;
 }
 
+#game-start-overlay,
 #game-over-overlay {
     width: 100%;
     height: 100%;
@@ -57,23 +58,33 @@
     position: absolute;
     top: 0;
     left: 0;
-    opacity: 0;
     transition: opacity 0.1s ease-in;
 }
 
-#overlay-content {
+#game-start-overlay {
+    opacity: 1;
+}
+
+#game-over-overlay {
+    opacity: 0;
+}
+
+#start-overlay-content,
+#over-overlay-content {
     padding: 2rem;
     background-color: #E0FFFF;
     border-radius: 1rem;
     text-align: center;
 }
 
-#overlay-content>h3 {
+#start-overlay-content>h3,
+#over-overlay-content>h3 {
     color: #E62121;
     font-size: 2rem;
 }
 
-#overlay-content>div {
+#start-overlay-content>div,
+#over-overlay-content>div {
     margin: 0.5rem 0;
     color: #292929;
     font-size: 1.25rem;

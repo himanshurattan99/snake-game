@@ -9,20 +9,33 @@ const cells = document.getElementsByClassName('cell');
 const gameInfo = document.getElementById('game-info');
 const scoreElement = document.getElementById('score-value');
 const highScoreElement = document.getElementById('high-score-value');
+const gameStartOverlay = document.getElementById('game-start-overlay');
 const gameOverOverlay = document.getElementById('game-over-overlay');
 const finalScoreElement = document.getElementById('final-score');
 
-// Initialize Game Variables
+// Initialize Game Variables and Constants
 let snakeHeadIndex = 119;
 let snakeBody = [snakeHeadIndex];
 let foodIndex = setFoodIndex(cells, snakeBody);
 let direction = 'top';
 let score = 0;
 let highScore = localStorage.getItem('snakeHighScore') || 0;
-let isGameActive = true;
+let isGameActive = false;
+let intervalID;
+const backgroundMusic = new Audio('./assets/background.mp3');
+const eatSound = new Audio('./assets/eat.mp3');
+const turnSound = new Audio('./assets/turn.mp3');;
+const gameOverSound = new Audio('./assets/gameOver.mp3');
 
 // Initialize High Score display
 highScoreElement.innerText = highScore;
+
+// Configure sound volumes
+backgroundMusic.volume = 0.5;
+eatSound.volume = 0.5;
+
+// Play background music during the game
+backgroundMusic.play();
 
 // Reset game state
 const resetGame = () => {
@@ -45,7 +58,8 @@ const resetGame = () => {
     score = 0;
     isGameActive = true;
 
-    // Hide game over overlay
+    // Hide game start and game over overlay
+    gameStartOverlay.style.opacity = 0;
     gameOverOverlay.style.opacity = 0;
 
     // Restart game loop
@@ -66,6 +80,9 @@ document.addEventListener("keydown", (event) => {
 
     // Check if new direction is not opposite of current direction
     if (directions[event.key] && directions[event.key] !== oppositeDirections[direction]) {
+        // Sound effect played when snake changes direction
+        turnSound.play();
+
         direction = directions[event.key];
     }
 });
@@ -79,6 +96,9 @@ const gameLoop = () => {
 
         // Check if Snake Head position matches Food position
         if (snakeHeadIndex === foodIndex) {
+            // Sound effect played when snake eats food
+            eatSound.play();
+
             // Increase Score
             score++;
             scoreElement.innerText = score;
@@ -92,6 +112,9 @@ const gameLoop = () => {
     }
     // Game over when Snake hits boundary or crosses itself
     else {
+        // Sound effect played when the game ends
+        gameOverSound.play();
+
         // Restore Snake Head color and highlight it with red border
         cells[snakeHeadIndex].style.background = '#00CE76';
         cells[snakeHeadIndex].style.border = 'solid 0.125rem #E62121';
@@ -116,6 +139,3 @@ const gameLoop = () => {
         clearInterval(intervalID);
     }
 }
-
-// Start game loop - moves Snake every 0.25s
-let intervalID = setInterval(gameLoop, 250);
