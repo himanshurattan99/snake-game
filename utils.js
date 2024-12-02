@@ -22,9 +22,9 @@ export const move = (cells, snakeBody, direction) => {
 
     // Set movement values for each direction
     const movements = {
-        top: -16,
+        top: -25,
         right: 1,
-        bottom: 16,
+        bottom: 25,
         left: -1
     };
 
@@ -44,25 +44,25 @@ export const move = (cells, snakeBody, direction) => {
 export const checkCollision = (snakeBody, direction) => {
     // Check top boundary
     if (direction === 'top') {
-        if (0 <= snakeBody[0] && snakeBody[0] <= 15) {
+        if (0 <= snakeBody[0] && snakeBody[0] <= 25) {
             return true;
         }
     }
     // Check right boundary
     else if (direction === 'right') {
-        if ((snakeBody[0] + 1) % 16 === 0) {
+        if ((snakeBody[0] + 1) % 25 === 0) {
             return true;
         }
     }
     // Check bottom boundary
     else if (direction === 'bottom') {
-        if (240 <= snakeBody[0] && snakeBody[0] <= 255) {
+        if (600 <= snakeBody[0] && snakeBody[0] <= 624) {
             return true;
         }
     }
     // Check left boundary
     else if (direction === 'left') {
-        if (snakeBody[0] % 16 === 0) {
+        if (snakeBody[0] % 25 === 0) {
             return true;
         }
     }
@@ -86,8 +86,8 @@ export const setFoodIndex = (cells, snakeBody) => {
 
     // Ensure Food does not spawn on Snake's Body
     do {
-        // Generate random index between 0 and 255 (inclusive)
-        foodIndex = Math.floor(Math.random() * 256);
+        // Generate random index between 0 and 624 (inclusive)
+        foodIndex = Math.floor(Math.random() * 625);
     } while (snakeBody.includes(foodIndex));
 
     // Color new position

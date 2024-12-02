@@ -1,8 +1,8 @@
 import { addElements, move, checkCollision, setFoodIndex } from './utils.js';
 
-// Get the Game Board element from the DOM and create 16x16 Game Board Grid (256 cells)
+// Get the Game Board element from the DOM and create 25x25 Game Board Grid (625 cells)
 const gameBoard = document.getElementById('game-board');
-addElements(gameBoard, 'div', 256, 'cell');
+addElements(gameBoard, 'div', 625, 'cell');
 
 // Select Game Board elements
 const cells = document.getElementsByClassName('cell');
@@ -14,7 +14,7 @@ const gameOverOverlay = document.getElementById('game-over-overlay');
 const finalScoreElement = document.getElementById('final-score');
 
 // Initialize Game Variables and Constants
-let snakeHeadIndex = 119;
+let snakeHeadIndex = 312;
 let snakeBody = [snakeHeadIndex];
 let foodIndex = setFoodIndex(cells, snakeBody);
 let direction = 'top';
@@ -34,9 +34,6 @@ highScoreElement.innerText = highScore;
 backgroundMusic.volume = 0.5;
 eatSound.volume = 0.5;
 
-// Play background music during the game
-backgroundMusic.play();
-
 // Reset game state
 const resetGame = () => {
     // Reset Snake Head color and border, Game Info background and score display
@@ -51,7 +48,7 @@ const resetGame = () => {
     });
 
     // Reset Game Variables
-    snakeHeadIndex = 119;
+    snakeHeadIndex = 312;
     snakeBody = [snakeHeadIndex];
     foodIndex = setFoodIndex(cells, snakeBody);
     direction = 'top';
@@ -70,6 +67,9 @@ const resetGame = () => {
 document.addEventListener("keydown", (event) => {
     // If game is over, restart on any key press
     if (!isGameActive) {
+        // Play background music during the game
+        backgroundMusic.play();
+
         resetGame();
         return;
     }
