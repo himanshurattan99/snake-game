@@ -28,7 +28,8 @@
 }
 
 #score,
-#high-score {
+#high-score,
+#difficulty {
     color: #E0FFFF;
     font-size: 1.125rem;
     display: flex;

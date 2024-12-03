@@ -9,6 +9,7 @@ const cells = document.getElementsByClassName('cell');
 const gameInfo = document.getElementById('game-info');
 const scoreElement = document.getElementById('score-value');
 const highScoreElement = document.getElementById('high-score-value');
+const levelElement = document.getElementById('level');
 const gameStartOverlay = document.getElementById('game-start-overlay');
 const gameOverOverlay = document.getElementById('game-over-overlay');
 const finalScoreElement = document.getElementById('final-score');
@@ -21,6 +22,7 @@ let direction = 'top';
 let score = 0;
 let highScore = localStorage.getItem('snakeHighScore') || 0;
 let isGameActive = false;
+let intervalTime = 250;
 let intervalID;
 const backgroundMusic = new Audio('./assets/background.mp3');
 const eatSound = new Audio('./assets/eat.mp3');
@@ -59,8 +61,11 @@ const resetGame = () => {
     gameStartOverlay.style.opacity = 0;
     gameOverOverlay.style.opacity = 0;
 
+    // Reset interval time
+    intervalTime = 250;
+
     // Restart game loop
-    intervalID = setInterval(gameLoop, 250);
+    intervalID = setInterval(gameLoop, intervalTime);
 };
 
 // Listen for arrow key presses to restart the game (if over) and change Snake direction during gameplay
@@ -87,6 +92,29 @@ document.addEventListener("keydown", (event) => {
     }
 });
 
+// Function to increase the game speed by decreasing the interval time as the player's score increases
+const adjustGameSpeed = () => {
+    if (score >= 10 && score < 15) {
+        intervalTime = 200;
+        levelElement.innerText = 2;
+    } else if (score >= 15 && score < 20) {
+        intervalTime = 150;
+        levelElement.innerText = 3;
+    }
+    else if (score >= 20 && score < 25) {
+        intervalTime = 100;
+        levelElement.innerText = 4;
+    }
+    else if (score >= 25) {
+        intervalTime = 50;
+        levelElement.innerText = 5;
+    }
+
+    // Restart the interval with the new speed
+    clearInterval(intervalID);
+    intervalID = setInterval(gameLoop, intervalTime);
+};
+
 // Main game loop: Handles Snake movement, collision detection, Food consumption, Snake growth, and game over conditions
 const gameLoop = () => {
     // Check if Snake Head hits boundary
@@ -102,6 +130,9 @@ const gameLoop = () => {
             // Increase Score
             score++;
             scoreElement.innerText = score;
+
+            // Adjust the game speed based on the current score
+            adjustGameSpeed();
 
             // Grow Snake by duplicating last Body segment when Food is eaten
             snakeBody.push(snakeBody[snakeBody.length - 1]);
