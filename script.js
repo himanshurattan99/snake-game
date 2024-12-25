@@ -41,7 +41,7 @@ const startGame = () => {
     cells[312].style.background = '#00CE76';
 
     // Remove border from previous Snake Head position on game restart
-    if (gameState.snakeHeadIndex) {
+    if (gameState.snakeHeadIndex || gameState.snakeHeadIndex === 0) {
         cells[gameState.snakeHeadIndex].style.border = 'none';
     }
 

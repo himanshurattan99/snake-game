@@ -41,7 +41,7 @@ export const checkCollision = (gameState) => {
 
     // Boundary collision checks
     const boundaryChecks = {
-        top: snakeHeadIndex >= 0 && snakeHeadIndex <= gridSize,
+        top: snakeHeadIndex >= 0 && snakeHeadIndex < gridSize,
         right: (snakeHeadIndex + 1) % gridSize === 0,
         bottom: snakeHeadIndex >= 600 && snakeHeadIndex <= 624,
         left: snakeHeadIndex % gridSize === 0
