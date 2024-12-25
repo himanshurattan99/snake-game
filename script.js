@@ -1,10 +1,7 @@
 import { addElements, move, checkCollision, setFoodIndex } from './utils.js';
 
-// Get the Game Board element from the DOM and create 25x25 Game Board Grid (625 cells)
+// Game Board DOM elements
 const gameBoard = document.getElementById('game-board');
-addElements(gameBoard, 'div', 625, 'cell');
-
-// Select Game Board elements
 const cells = document.getElementsByClassName('cell');
 const gameInfo = document.getElementById('game-info');
 const scoreElement = document.getElementById('score-value');
@@ -14,159 +11,171 @@ const gameStartOverlay = document.getElementById('game-start-overlay');
 const gameOverOverlay = document.getElementById('game-over-overlay');
 const finalScoreElement = document.getElementById('final-score');
 
-// Initialize Game Variables and Constants
-let snakeHeadIndex = 312;
-let snakeBody = [snakeHeadIndex];
-let foodIndex = setFoodIndex(cells, snakeBody);
-let direction = 'top';
-let score = 0;
-let highScore = localStorage.getItem('snakeHighScore') || 0;
-let isGameActive = false;
-let intervalTime = 250;
-let intervalID;
-const backgroundMusic = new Audio('./assets/background.mp3');
-const eatSound = new Audio('./assets/eat.mp3');
-const turnSound = new Audio('./assets/turn.mp3');;
-const gameOverSound = new Audio('./assets/gameOver.mp3');
+// Game State object to track game properties
+let gameState = {};
 
-// Initialize High Score display
-highScoreElement.innerText = highScore;
+// Game Sounds
+const gameSounds = {
+    background: new Audio('./assets/background.mp3'),
+    eat: new Audio('./assets/eat.mp3'),
+    turn: new Audio('./assets/turn.mp3'),
+    gameOver: new Audio('./assets/gameOver.mp3')
+};
 
-// Configure sound volumes
-backgroundMusic.volume = 0.5;
-eatSound.volume = 0.5;
+// Function to set up Game Board and set sound volumes
+const initializeGame = () => {
+    const gridSize = 25;
+    addElements(gameBoard, 'div', gridSize ** 2, 'cell');
 
-// Reset game state
-const resetGame = () => {
-    // Reset Snake Head color and border, Game Info background and score display
-    cells[snakeHeadIndex].style.background = '#00CE76';
-    cells[snakeHeadIndex].style.border = 'none';
-    gameInfo.style.background = '#0076CE';
-    scoreElement.innerText = 0;
+    Object.values(gameSounds).forEach(sound => sound.volume = 0.5);
+}
 
-    // Reset Game Board
+// Function to Start or Restart Game
+const startGame = () => {
+    // Set Game Board
     Array.from(cells).forEach(cell => {
         cell.style.background = '#292929';
     });
 
-    // Reset Game Variables
-    snakeHeadIndex = 312;
-    snakeBody = [snakeHeadIndex];
-    foodIndex = setFoodIndex(cells, snakeBody);
-    direction = 'top';
-    score = 0;
-    isGameActive = true;
+    // Set initial Snake Head position
+    cells[312].style.background = '#00CE76';
+
+    // Remove border from previous Snake Head position on game restart
+    if (gameState.snakeHeadIndex) {
+        cells[gameState.snakeHeadIndex].style.border = 'none';
+    }
+
+    // Set Game State
+    gameState = {
+        snakeHeadIndex: 312,
+        snakeBody: [312],
+        foodIndex: null,
+        direction: 'top',
+        score: 0,
+        highScore: localStorage.getItem('snakeHighScore') || 0,
+        isGameActive: true,
+        intervalTime: 250,
+        intervalID: null
+    };
+
+    // Set Food Index
+    setFoodIndex(cells, gameState);
+
+    // Set Score, High Score display, and Game Info background
+    scoreElement.innerText = 0;
+    highScoreElement.innerText = gameState.highScore;
+    gameInfo.style.background = '#0076CE';
 
     // Hide game start and game over overlay
     gameStartOverlay.style.opacity = 0;
     gameOverOverlay.style.opacity = 0;
 
-    // Reset interval time
-    intervalTime = 250;
-
-    // Restart game loop
-    intervalID = setInterval(gameLoop, intervalTime);
+    // Start game loop
+    gameState.intervalID = setInterval(gameLoop, gameState.intervalTime);
 };
 
-// Listen for arrow key presses to restart the game (if over) and change Snake direction during gameplay
-document.addEventListener("keydown", (event) => {
-    // If game is over, restart on any key press
-    if (!isGameActive) {
-        // Play background music during the game
-        backgroundMusic.play();
+// Function to End Game
+const endGame = () => {
+    gameSounds.gameOver.play();
 
-        resetGame();
+    // Restore Snake Head color and highlight it with red border
+    cells[gameState.snakeHeadIndex].style.background = '#00CE76';
+    cells[gameState.snakeHeadIndex].style.border = 'solid 0.125rem #E62121';
+
+    // Change Game Info background to red
+    gameInfo.style.background = '#E62121';
+
+    // Update High Score if current Score is higher
+    if (gameState.score > gameState.highScore) {
+        gameState.highScore = gameState.score;
+        localStorage.setItem('snakeHighScore', gameState.highScore);
+        highScoreElement.innerText = gameState.highScore;
+    }
+
+    // Display game over overlay and update final score on it
+    gameOverOverlay.style.opacity = 1;
+    finalScoreElement.innerText = gameState.score;
+
+    // Change game active status
+    gameState.isGameActive = false;
+
+    clearInterval(gameState.intervalID);
+}
+
+// Function to increase Game speed based on Score
+const adjustGameSpeed = () => {
+    let prevIntervalTime = gameState.intervalTime;
+
+    if (gameState.score >= 10 && gameState.score < 15) {
+        gameState.intervalTime = 200;
+        levelElement.innerText = 2;
+    } else if (gameState.score >= 15 && gameState.score < 20) {
+        gameState.intervalTime = 150;
+        levelElement.innerText = 3;
+    }
+    else if (gameState.score >= 20 && gameState.score < 25) {
+        gameState.intervalTime = 100;
+        levelElement.innerText = 4;
+    }
+    else if (gameState.score >= 25) {
+        gameState.intervalTime = 50;
+        levelElement.innerText = 5;
+    }
+
+    // Reset game loop with new speed if interval time changed
+    if (gameState.intervalTime !== prevIntervalTime) {
+        clearInterval(gameState.intervalID);
+        gameState.intervalID = setInterval(gameLoop, gameState.intervalTime);
+    }
+};
+
+// Handle keyboard input for game control
+document.addEventListener("keydown", (event) => {
+    // Start or restart game if not currently running
+    if (!gameState.isGameActive) {
+        gameSounds.background.play();
+        startGame();
         return;
     }
 
     const directions = { "ArrowUp": 'top', "ArrowRight": 'right', "ArrowDown": 'bottom', "ArrowLeft": 'left' };
-
     const oppositeDirections = { "top": 'bottom', "bottom": 'top', "left": 'right', "right": 'left' };
 
-    // Check if new direction is not opposite of current direction
-    if (directions[event.key] && directions[event.key] !== oppositeDirections[direction]) {
-        // Sound effect played when snake changes direction
-        turnSound.play();
-
-        direction = directions[event.key];
+    // Change direction if new direction is not opposite of current direction
+    if (directions[event.key] && directions[event.key] !== oppositeDirections[gameState.direction]) {
+        gameSounds.turn.play();
+        gameState.direction = directions[event.key];
     }
 });
 
-// Function to increase the game speed by decreasing the interval time as the player's score increases
-const adjustGameSpeed = () => {
-    if (score >= 10 && score < 15) {
-        intervalTime = 200;
-        levelElement.innerText = 2;
-    } else if (score >= 15 && score < 20) {
-        intervalTime = 150;
-        levelElement.innerText = 3;
-    }
-    else if (score >= 20 && score < 25) {
-        intervalTime = 100;
-        levelElement.innerText = 4;
-    }
-    else if (score >= 25) {
-        intervalTime = 50;
-        levelElement.innerText = 5;
-    }
-
-    // Restart the interval with the new speed
-    clearInterval(intervalID);
-    intervalID = setInterval(gameLoop, intervalTime);
-};
-
-// Main game loop: Handles Snake movement, collision detection, Food consumption, Snake growth, and game over conditions
+// Main game loop
 const gameLoop = () => {
     // Check if Snake Head hits boundary
-    if (!checkCollision(snakeBody, direction)) {
-        // Move Snake in current direction and get new Snake Head position
-        snakeHeadIndex = move(cells, snakeBody, direction);
+    if (checkCollision(gameState)) {
+        endGame();
+    } else {
+        // Move Snake in current direction and update new Snake Head position
+        move(cells, gameState);
+        gameState.snakeHeadIndex = gameState.snakeBody[0];
 
         // Check if Snake Head position matches Food position
-        if (snakeHeadIndex === foodIndex) {
-            // Sound effect played when snake eats food
-            eatSound.play();
+        if (gameState.snakeHeadIndex === gameState.foodIndex) {
+            gameSounds.eat.play();
 
             // Increase Score
-            score++;
-            scoreElement.innerText = score;
+            gameState.score += 1;
+            scoreElement.innerText = gameState.score;
 
-            // Adjust the game speed based on the current score
             adjustGameSpeed();
 
-            // Grow Snake by duplicating last Body segment when Food is eaten
-            snakeBody.push(snakeBody[snakeBody.length - 1]);
+            // Grow Snake by duplicating last Body segment
+            gameState.snakeBody.push(gameState.snakeBody[gameState.snakeBody.length - 1]);
 
             // Update Food position
-            foodIndex = setFoodIndex(cells, snakeBody);
+            setFoodIndex(cells, gameState);
         }
-    }
-    // Game over when Snake hits boundary or crosses itself
-    else {
-        // Sound effect played when the game ends
-        gameOverSound.play();
-
-        // Restore Snake Head color and highlight it with red border
-        cells[snakeHeadIndex].style.background = '#00CE76';
-        cells[snakeHeadIndex].style.border = 'solid 0.125rem #E62121';
-
-        // Change Game Info background to red
-        gameInfo.style.background = '#E62121';
-
-        // Update High Score if current Score is higher
-        if (score > highScore) {
-            highScore = score;
-            localStorage.setItem('snakeHighScore', highScore);
-            highScoreElement.innerText = highScore;
-        }
-
-        // Display game over overlay and update final score on it
-        gameOverOverlay.style.opacity = 1;
-        finalScoreElement.innerText = score;
-
-        // Change game active status
-        isGameActive = false;
-
-        clearInterval(intervalID);
     }
 }
+
+// Initialize the game on page load
+initializeGame();
