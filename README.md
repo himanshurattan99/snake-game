@@ -4,30 +4,28 @@ A nostalgic Snake Game built with vanilla JavaScript, HTML5 Canvas, and CSS. Con
 
 ## 🎮 Features
 
-- 🎯 Simple and intuitive controls using arrow keys
-- 🔄 Smooth snake movement
-- 🧱 Wall boundary collision detection
-- 🍎 Random food spawning mechanism
-- 🍴 Food consumption collision detection
-- ➕ Snake length growth mechanism
-- 📛 Game ends when snake crosses itself
-- 🎨 Clean, minimalist design
-- 💻 No dependencies - built with pure JavaScript
+- 🎯 Intuitive arrow key controls with smooth snake movement
+- 🍎 Dynamic food spawning with collision detection and snake growth
+- 🔥 Multiple difficulty levels with increasing speed
+- 🧱 Comprehensive collision detection (walls and self)
+- 🪙 Real-time scoring with persistent high score system
+- 💻 Built with pure JavaScript - no dependencies
+- 🎨 Clean, minimalist design with overlay messages
+- 🎵 Enhanced gameplay with sound effects
 
 ## 🚀 Features To Add
 
-- 🪙 Implement real-time score tracking with persistent high score storage
-- ❌ Display game over message with screen overlay
-- 🎵 Include sound effects for enhanced gameplay experience
-- 🌐 Customizable game board grid size
-- ⏯️ Add game control features (pause/restart)
+- 📱 Add mobile touch controls
 - 📱 Add a responsive layout
+- ✨ Add different types of food with special effects
 
 ## 🐞 Bugs Fixed
 
 - Prevented snake from moving in opposite direction
 - Fixed self-collision detection
 - Ensured food does not spawn on snake's body
+- Fixed the issue where background music would not start when game starts
+- Corrected snake's collision detection at top border (snake's head at index 0)
 
 ## 🛠️ Technical Stack
 
@@ -45,12 +43,6 @@ snake-game/
 ├── script.js          # Main JavaScript file
 └── utils.js           # Utility functions
 ```
-
-## 🎯 Future Enhancements
-
-- 🔥 Implement difficulty levels
-- 📱 Add mobile touch controls
-- ✨ Add different types of food with special effects
 
 ## 👏 Acknowledgments
 
